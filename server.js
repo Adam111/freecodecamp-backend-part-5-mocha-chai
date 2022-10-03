@@ -67,7 +67,7 @@ app.route('/travellers')
 
 var error;
 app.get('/_api/get-tests', cors(), function(req, res, next){
-  if(error || process.env.SKIP_TESTS)
+  if(error || process.env.SKIP_TESTS === 'true')
     return res.json({status: 'unavailable'});
   next();
 },
@@ -84,7 +84,7 @@ function(req, res){
 
 const listener = app.listen(process.env.PORT || 3000, function() {
   console.log('Listening on port ' + listener.address().port);
-  if(!process.env.SKIP_TESTS) {
+  if(process.env.SKIP_TESTS !== 'true') {
     console.log('Running Tests...');
     setTimeout(function () {
       try {
