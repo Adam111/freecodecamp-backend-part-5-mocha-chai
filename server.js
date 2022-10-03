@@ -67,7 +67,7 @@ app.route('/travellers')
 
 var error;
 app.get('/_api/get-tests', cors(), function(req, res, next){
-  if(error || process.env.SKIP_TESTS) 
+  if(error || process.env.SKIP_TESTS)
     return res.json({status: 'unavailable'});
   next();
 },
@@ -82,17 +82,16 @@ function(req, res){
 });
 
 
-app.listen(process.env.PORT || 3000, function() {
-  console.log("Listening on port " + process.env.PORT);
+const listener = app.listen(process.env.PORT || 3000, function() {
+  console.log('Listening on port ' + listener.address().port);
   if(!process.env.SKIP_TESTS) {
     console.log('Running Tests...');
     setTimeout(function () {
       try {
         runner.run();
       } catch(e) {
-        error = e;
-          console.log('Tests are not valid:');
-          console.log(error);
+        console.log('Tests are not valid:');
+        console.log(e);
       }
     }, 1500);
   }
