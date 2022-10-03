@@ -12,7 +12,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/views/index.html');
 })
 
-app.use(express.static(__dirname + '/public'));
+app.use('/public', express.static(process.cwd() + '/public'));
 
 app.get('/hello', function(req, res){
   var name = req.query.name || 'Guest';
