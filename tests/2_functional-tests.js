@@ -8,6 +8,8 @@ chai.use(chaiHttp);                   /** use the chai-http plugin **/
 
 suite('Functional Tests', function () {
 
+	this.timeout(5000);
+
 	// Mocha allows testing asyncronous operations.
 	// There is a small (BIG) difference. Can you spot it?
 
@@ -15,11 +17,11 @@ suite('Functional Tests', function () {
 	test('Asynchronous test #example', function (done) { /** <= Pass a callback to the test function **/
 		setTimeout(function () {
 			assert.isOk('Async test!');
-			done(); /** Call 'done()' when the async operation is completed**/
+			done(); /** Call 'done()' when the async operation is completed **/
 		}, 500);   // the function will be executed after 500ms
 	});
 
-	// NOTE: The tests having #example in their description string,
+	// NOTE: The tests having #example in their description string
 	// are instructional examples and are not parsed by our test analyser
 
 	suite('Integration tests with chai-http', function () {
@@ -181,6 +183,9 @@ suite('Functional Tests', function () {
 	// Browser.localhost('example.com', (process.env.PORT || 3000));
 
 	suite('e2e Testing with Zombie.js', function () {
+
+		this.timeout(5000);
+
 		const browser = new Browser();
 
 		// Mocha allows You to prepare the ground running some code
@@ -189,12 +194,18 @@ suite('Functional Tests', function () {
 
 		// With a headless browser, before the actual testing, we need to
 		// **visit** the page we are going to inspect...
-		// the suiteSetup 'hook' is executed only once at the suite startup.
+		// The suiteSetup 'hook' is executed only once at the suite startup.
 		// Other different hook types can be executed before each test, after
 		// each test, or at the end of a suite. See the Mocha docs for more infos.
 
 		suiteSetup(function (done) { // Remember, web interactions are asynchronous!
 			return browser.visit('/', done);  // Browser asynchronous operations take a callback
+		});
+
+		suite('Headless browser', function () {
+			test('should have a working "site" property', function () {
+				assert.isNotNull(browser.site);
+			});
 		});
 
 		suite('"Famous Italian Explorers" form', function () {
@@ -217,20 +228,22 @@ suite('Functional Tests', function () {
 			test('#example - submit the input "surname" : "Polo"', function (done) {
 				browser
 					.fill('surname', 'Polo')
-					.pressButton('submit', function () {
-						// pressButton is ## Async ##.
-						// It waits for the ajax call to complete...
+					.then(function () {
+						browser.pressButton('submit', function () {
+							// pressButton is ## Async ##.
+							// It waits for the ajax call to complete...
 
-						// assert that status is OK 200
-						browser.assert.success();
-						// assert that the text inside the element 'span#name' is 'Marco'
-						browser.assert.text('span#name', 'Marco');
-						// assert that the text inside the element 'span#surname' is 'Polo'
-						browser.assert.text('span#surname', 'Polo');
-						// assert that the element(s) 'span#dates' exist and their count is 1
-						browser.assert.element('span#dates', 1);
+							// assert that status is OK 200
+							browser.assert.success();
+							// assert that the text inside the element 'span#name' is 'Marco'
+							browser.assert.text('span#name', 'Marco');
+							// assert that the text inside the element 'span#surname' is 'Polo'
+							browser.assert.text('span#surname', 'Polo');
+							// assert that the element(s) 'span#dates' exist and their count is 1
+							browser.assert.element('span#dates', 1);
 
-						done();   // It's an async test, so we have to call 'done()''
+							done(); // It's an async test, so we have to call 'done()''
+						});
 					});
 			});
 
@@ -248,23 +261,25 @@ suite('Functional Tests', function () {
 				// assert that the element(s) 'span#dates' exist and their count is 1
 				browser
 					.fill('surname', 'Colombo')
-					.pressButton('submit', function () {
+					.then(function () {
+						browser.pressButton('submit', function () {
 
-						/** YOUR TESTS HERE, Don't forget to remove assert.fail() **/
+							/** YOUR TESTS HERE, Don't forget to remove assert.fail() **/
 
-						// pressButton is Async.  Waits for the ajax call to complete...
+							// pressButton is Async.  Waits for the ajax call to complete...
 
-						// assert that status is OK 200
-						browser.assert.success();
-						// assert that the text inside the element 'span#name' is 'Cristoforo'
-						browser.assert.text('span#name', 'Cristoforo');
-						// assert that the text inside the element 'span#surname' is 'Colombo'
-						browser.assert.text('span#surname', 'Colombo');
-						// assert that the element(s) 'span#dates' exist and their count is 1
-						browser.assert.element('span#dates', 1);
-						// assert.fail();
+							// assert that status is OK 200
+							browser.assert.success();
+							// assert that the text inside the element 'span#name' is 'Cristoforo'
+							browser.assert.text('span#name', 'Cristoforo');
+							// assert that the text inside the element 'span#surname' is 'Colombo'
+							browser.assert.text('span#surname', 'Colombo');
+							// assert that the element(s) 'span#dates' exist and their count is 1
+							browser.assert.element('span#dates', 1);
+							// assert.fail();
 
-						done();   // It's an async test, so we have to call 'done()''
+							done(); // It's an async test, so we have to call 'done()''
+						});
 					});
 			});
 
@@ -274,17 +289,19 @@ suite('Functional Tests', function () {
 				// fill the form, and submit.
 				browser
 					.fill('surname', 'Vespucci')
-					.pressButton('submit', function () {
-						// assert that status is OK 200
-						browser.assert.success();
-						// assert that the text inside the element 'span#name' is 'Amerigo'
-						browser.assert.text('span#name', 'Amerigo');
-						// assert that the text inside the element 'span#surname' is 'Vespucci'
-						browser.assert.text('span#surname', 'Vespucci');
-						// assert that the element(s) 'span#dates' exist and their count is 1
-						browser.assert.element('span#dates', 1);
-						//assert.fail();
-						done();
+					.then(function () {
+						browser.pressButton('submit', function () {
+							// assert that status is OK 200
+							browser.assert.success();
+							// assert that the text inside the element 'span#name' is 'Amerigo'
+							browser.assert.text('span#name', 'Amerigo');
+							// assert that the text inside the element 'span#surname' is 'Vespucci'
+							browser.assert.text('span#surname', 'Vespucci');
+							// assert that the element(s) 'span#dates' exist and their count is 1
+							browser.assert.element('span#dates', 1);
+							//assert.fail();
+							done(); // It's an async test, so we have to call 'done()''
+						});
 					});
 			});
 		});
